@@ -31,8 +31,8 @@ function Login(props) {
   var [isLoading, setIsLoading] = useState(false);
   var [error, setError] = useState(null);
   var [nameValue, setNameValue] = useState("");
-  var [loginValue, setLoginValue] = useState("199829541068580");
-  var [passwordValue, setPasswordValue] = useState("10");
+  var [loginValue, setLoginValue] = useState("112282443695924");
+  var [passwordValue, setPasswordValue] = useState("1");
 
 
   return (

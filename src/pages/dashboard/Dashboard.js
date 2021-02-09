@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
 import {
   Grid,
   LinearProgress,
@@ -33,6 +35,7 @@ import { Typography } from "../../components/Wrappers";
 import Dot from "../../components/Sidebar/components/Dot";
 import Table from "./components/Table/Table";
 import BigStat from "./components/BigStat/BigStat";
+import { useUserState } from "../../context/UserContext";
 
 const mainChartData = getMainChartData();
 const PieChartData = [
@@ -43,25 +46,51 @@ const PieChartData = [
 ];
 
 export default function Dashboard(props) {
+
   var classes = useStyles();
   var theme = useTheme();
+  var UserState = useUserState();
 
-  // local
-  var [mainChartState, setMainChartState] = useState("monthly");
+  var [etablissement, setEtablissement] = useState("");
+  var [examens, setExamens] = useState("");
+  var [nbExamens, setNbExamens] = useState("");
+  var [nbNotes, setNbNotes] = useState("");
+
+  useEffect(() => {
+    axios.get(`http://194.183.220.233:9095/Mediconsent/rest/etablissement/utilisateur/${UserState.id_utilisateur}`)
+      .then(res => {
+        const etablissement_data = res.data
+        setEtablissement(etablissement_data);
+
+        axios.get(`http://194.183.220.233:9095/Mediconsent/rest/examens/etablissement/${etablissement_data.id_etablissement}`)
+          .then(res => {
+            const examens_data = res.data
+            setExamens(examens_data);
+            setNbExamens(examens_data.length)
+
+            let total_notes = 0;
+            examens_data.map((examens) => {
+              total_notes ++;
+            })
+            setNbNotes(total_notes);
+          })
+      })
+  }, []);
+
 
   return (
     <>
       <PageTitle title="Dashboard" button={<Button
-      variant="contained"
-      size="medium"
-      color="secondary"
-    >
-        Latest Reports
-    </Button>} />
+        variant="contained"
+        size="medium"
+        color="secondary"
+      >
+
+      </Button>} />
       <Grid container spacing={4}>
-        <Grid item lg={3} md={4} sm={6} xs={12}>
+        <Grid item lg={12} md={12} sm={12} xs={12}>
           <Widget
-            title="Visits Today"
+            title="Etablissement"
             upperTitle
             bodyClass={classes.fullHeightBody}
             className={classes.card}
@@ -69,244 +98,53 @@ export default function Dashboard(props) {
             <div className={classes.visitsNumberContainer}>
               <Grid container item alignItems={"center"}>
                 <Grid item xs={6}>
-              <Typography size="xl" weight="medium" noWrap>
-                12, 678
-              </Typography>
+                  <Typography size="xl" weight="medium" noWrap>
+                    {etablissement.nom_etablissement}
+                  </Typography>
                 </Grid>
+              </Grid>
+            </div>
+          </Widget>
+        </Grid>
+
+        <Grid item lg={4} md={6} sm={8} xs={12}>
+          <Widget
+            title="Nombre d'examens"
+            upperTitle
+            bodyClass={classes.fullHeightBody}
+            className={classes.card}
+          >
+            <div className={classes.visitsNumberContainer}>
+              <Grid container item alignItems={"center"}>
                 <Grid item xs={6}>
-              <LineChart
-                width={100}
-                height={30}
-                data={[
-                  { value: 10 },
-                  { value: 15 },
-                  { value: 10 },
-                  { value: 17 },
-                  { value: 18 },
-                ]}
-              >
-                <Line
-                  type="natural"
-                  dataKey="value"
-                  stroke={theme.palette.success.main}
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
+                  <Typography size="xl" weight="medium" noWrap>
+                    {nbExamens}
+                  </Typography>
                 </Grid>
               </Grid>
             </div>
-            <Grid
-              container
-              direction="row"
-              justify="space-between"
-              alignItems="center"
-            >
-              <Grid item xs={4}>
-                <Typography color="text" colorBrightness="secondary" noWrap>
-                  Registrations
-                </Typography>
-                <Typography size="md">860</Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography color="text" colorBrightness="secondary" noWrap>
-                  Sign Out
-                </Typography>
-                <Typography size="md">32</Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography color="text" colorBrightness="secondary" noWrap>
-                  Rate
-                </Typography>
-                <Typography size="md">3.25%</Typography>
-              </Grid>
-            </Grid>
           </Widget>
         </Grid>
-        <Grid item lg={3} md={8} sm={6} xs={12}>
+
+        <Grid item lg={4} md={6} sm={8} xs={12}>
           <Widget
-            title="App Performance"
+            title="Nombre d'avis"
             upperTitle
-            className={classes.card}
             bodyClass={classes.fullHeightBody}
-          >
-            <div className={classes.performanceLegendWrapper}>
-              <div className={classes.legendElement}>
-                <Dot color="warning" />
-                <Typography
-                  color="text"
-                  colorBrightness="secondary"
-                  className={classes.legendElementText}
-                >
-                  Integration
-                </Typography>
-              </div>
-              <div className={classes.legendElement}>
-                <Dot color="primary" />
-                <Typography
-                  color="text"
-                  colorBrightness="secondary"
-                  className={classes.legendElementText}
-                >
-                  SDK
-                </Typography>
-              </div>
-            </div>
-            <div className={classes.progressSection}>
-              <Typography
-                size="md"
-                color="text"
-                colorBrightness="secondary"
-                className={classes.progressSectionTitle}
-              >
-                Integration
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={77}
-                classes={{ barColorPrimary: classes.progressBarPrimary }}
-                className={classes.progress}
-              />
-            </div>
-            <div>
-              <Typography
-                size="md"
-                color="text"
-                colorBrightness="secondary"
-                className={classes.progressSectionTitle}
-              >
-                SDK
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={73}
-                classes={{ barColorPrimary: classes.progressBarWarning }}
-                className={classes.progress}
-              />
-            </div>
-          </Widget>
-        </Grid>
-        <Grid item lg={3} md={8} sm={6} xs={12}>
-          <Widget
-            title="Server Overview"
-            upperTitle
             className={classes.card}
-            bodyClass={classes.fullHeightBody}
           >
-            <div className={classes.serverOverviewElement}>
-              <Typography
-                color="text"
-                colorBrightness="secondary"
-                className={classes.serverOverviewElementText}
-                noWrap
-              >
-                60% / 37°С / 3.3 Ghz
-              </Typography>
-              <div className={classes.serverOverviewElementChartWrapper}>
-                <ResponsiveContainer height={50} width="99%">
-                  <AreaChart data={getRandomData(10)}>
-                    <Area
-                      type="natural"
-                      dataKey="value"
-                      stroke={theme.palette.secondary.main}
-                      fill={theme.palette.secondary.light}
-                      strokeWidth={2}
-                      fillOpacity="0.25"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-            <div className={classes.serverOverviewElement}>
-              <Typography
-                color="text"
-                colorBrightness="secondary"
-                className={classes.serverOverviewElementText}
-                noWrap
-              >
-                54% / 31°С / 3.3 Ghz
-              </Typography>
-              <div className={classes.serverOverviewElementChartWrapper}>
-                <ResponsiveContainer height={50} width="99%">
-                  <AreaChart data={getRandomData(10)}>
-                    <Area
-                      type="natural"
-                      dataKey="value"
-                      stroke={theme.palette.primary.main}
-                      fill={theme.palette.primary.light}
-                      strokeWidth={2}
-                      fillOpacity="0.25"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-            <div className={classes.serverOverviewElement}>
-              <Typography
-                color="text"
-                colorBrightness="secondary"
-                className={classes.serverOverviewElementText}
-                noWrap
-              >
-                57% / 21°С / 3.3 Ghz
-              </Typography>
-              <div className={classes.serverOverviewElementChartWrapper}>
-                <ResponsiveContainer height={50} width="99%">
-                  <AreaChart data={getRandomData(10)}>
-                    <Area
-                      type="natural"
-                      dataKey="value"
-                      stroke={theme.palette.warning.main}
-                      fill={theme.palette.warning.light}
-                      strokeWidth={2}
-                      fillOpacity="0.25"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
+            <div className={classes.visitsNumberContainer}>
+              <Grid container item alignItems={"center"}>
+                <Grid item xs={6}>
+                  <Typography size="xl" weight="medium" noWrap>
+                    {nbNotes}
+                  </Typography>
+                </Grid>
+              </Grid>
             </div>
           </Widget>
         </Grid>
-        <Grid item lg={3} md={4} sm={6} xs={12}>
-          <Widget title="Revenue Breakdown" upperTitle className={classes.card}>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <ResponsiveContainer width="100%" height={144}>
-                  <PieChart>
-                    <Pie
-                      data={PieChartData}
-                      innerRadius={30}
-                      outerRadius={40}
-                      dataKey="value"
-                    >
-                      {PieChartData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={theme.palette[entry.color].main}
-                        />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              </Grid>
-              <Grid item xs={6}>
-                <div className={classes.pieChartLegendWrapper}>
-                  {PieChartData.map(({ name, value, color }, index) => (
-                    <div key={color} className={classes.legendItemContainer}>
-                      <Dot color={color} />
-                      <Typography style={{ whiteSpace: "nowrap", fontSize: 12 }} >
-                        &nbsp;{name}&nbsp;
-                      </Typography>
-                      <Typography color="text" colorBrightness="secondary">
-                        &nbsp;{value}
-                      </Typography>
-                    </div>
-                  ))}
-                </div>
-              </Grid>
-            </Grid>
-          </Widget>
-        </Grid>
+
         <Grid item xs={12}>
           <Widget
             bodyClass={classes.mainChartBody}
@@ -339,24 +177,6 @@ export default function Dashboard(props) {
                     </Typography>
                   </div>
                 </div>
-                <Select
-                  value={mainChartState}
-                  onChange={e => setMainChartState(e.target.value)}
-                  input={
-                    <OutlinedInput
-                      labelWidth={0}
-                      classes={{
-                        notchedOutline: classes.mainChartSelectRoot,
-                        input: classes.mainChartSelect,
-                      }}
-                    />
-                  }
-                  autoWidth
-                >
-                  <MenuItem value="daily">Daily</MenuItem>
-                  <MenuItem value="weekly">Weekly</MenuItem>
-                  <MenuItem value="monthly">Monthly</MenuItem>
-                </Select>
               </div>
             }
           >
