@@ -26,7 +26,8 @@ import Sidebar from "../Sidebar";
 // pages
 import Dashboard from "../../pages/dashboard";
 import Appointments from "../../pages/appointments/Appointments";
-import Notifications from "../../pages/notifications";
+import Radio from "../../pages/radio/Radio";
+import Scanner from "../../pages/scanner/Scanner";
 import Maps from "../../pages/maps";
 import Opinions from "../../pages/opinions/Opinions";
 import Icons from "../../pages/icons";
@@ -56,7 +57,8 @@ function Layout(props) {
               <Route path="/app/dashboard" component={Dashboard} />
               <Route path="/app/appointments" component={Appointments} />
               <Route path="/app/opinions" component={Opinions} />
-              <Route path="/app/notifications" component={Notifications} />
+              <Route path="/app/forms/scanner" component={Scanner} />
+              <Route path="/app/forms/radio" component={Radio} />
               <Route
                 exact
                 path="/app/ui"

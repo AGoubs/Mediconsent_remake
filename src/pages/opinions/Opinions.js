@@ -9,27 +9,9 @@ import Widget from "../../components/Widget/Widget";
 
 //Dropzone for import
 import 'react-dropzone-uploader/dist/styles.css'
-import Dropzone from 'react-dropzone-uploader'
-import { Typography } from "../../components/Wrappers/Wrappers";
 
 //axios for API
 import axios from 'axios';
-
-const getUploadParams = ({ meta }) => { return { url: 'https://localhost/mediconsent' } }
-
-
-// called every time a file's `status` changes
-const handleChangeStatus = ({ meta, file }, status) => { }
-// test
-// receives array of files that are done uploading when submit button is clicked
-const handleSubmit = (files, allFiles) => {
-  console.log(files);
-  // success({
-  //     title: 'Succès !',s
-  //     text: 'Importation réussie'
-  // });
-  allFiles.forEach(f => f.remove())
-}
 
 const useStyles = makeStyles(theme => ({
   tableOverflow: {
@@ -65,7 +47,7 @@ export default function Opinions() {
   else {
     return (
       <>
-        <PageTitle title="Rendez-vous" />
+        <PageTitle title="Avis" />
         <Grid container spacing={4}>
           <Grid item xs={12}>
             <MUIDataTable
@@ -82,3 +64,5 @@ export default function Opinions() {
     );
   }
 }
+
+
