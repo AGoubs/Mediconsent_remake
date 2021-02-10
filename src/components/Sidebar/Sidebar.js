@@ -40,7 +40,7 @@ const structure = [
   {
     id: 3,
     label: "Rendez-vous",
-    link: "/app/appoitments",
+    link: "/app/appointments",
     icon: <CalendarToday />,
   },
   {

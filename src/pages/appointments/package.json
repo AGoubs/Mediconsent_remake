@@ -1,6 +1,6 @@
 {
-  "name": "Error",
-  "version": "0.0.0",
-  "main": "Error.js",
+  "name": "Appointments",
+  "version": "0.0.1",
+  "main": "Appointments.js",
   "private": true
 }
