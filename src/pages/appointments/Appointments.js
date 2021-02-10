@@ -59,11 +59,11 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function Tables() {
+export default function Appointments() {
   const classes = useStyles();
   return (
     <>
-      <PageTitle title="Rendez-vous" />
+      <PageTitle title="Opinions" />
       <Grid container spacing={4}>
         <Grid item lg={12} md={12} sm={12} xs={12}>
           <Widget

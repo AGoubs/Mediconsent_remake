@@ -55,8 +55,8 @@ const structure = [
   },
   { id: 5, type: "divider" },
   { id: 6, type: "title", label: "RELATION CLIENT" },
-  { id: 7, label: "Consentements", link: "", icon: <Check /> },
-  { id: 8, label: "Avis", link: "", icon: <Star /> },
+  { id: 7, label: "Consentements", link: "/app/consents", icon: <Check /> },
+  { id: 8, label: "Avis", link: "/app/opinions", icon: <Star /> },
 ];
 
 function Sidebar({ location }) {

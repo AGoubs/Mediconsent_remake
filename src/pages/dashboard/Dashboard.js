@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 import {
@@ -48,7 +48,7 @@ export default function Dashboard(props) {
   var [isLoading, setIsLoading] = useState(true);
   var [nbNotes, setNbNotes] = useState("");
 
-  useLayoutEffect(() => {
+  useEffect(()  => {
     axios.get(`http://194.183.220.233:9095/Mediconsent/rest/etablissement/utilisateur/${UserState.id_utilisateur}`)
       .then(res => {
         const etablissement_data = res.data

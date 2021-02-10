@@ -1,5 +1,5 @@
-import React from "react";
-import { Grid } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { Grid, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import MUIDataTable from "mui-datatables";
 
@@ -14,7 +14,6 @@ import { Typography } from "../../components/Wrappers/Wrappers";
 
 //axios for API
 import axios from 'axios';
-
 
 const getUploadParams = ({ meta }) => { return { url: 'https://localhost/mediconsent' } }
 
@@ -32,77 +31,54 @@ const handleSubmit = (files, allFiles) => {
   allFiles.forEach(f => f.remove())
 }
 
-
-const datatableData = [
-  ["Joe James", "Example Inc.", "Yonkers", "NY"],
-  ["John Walsh", "Example Inc.", "Hartford", "CT"],
-  ["Bob Herm", "Example Inc.", "Tampa", "FL"],
-  ["James Houston", "Example Inc.", "Dallas", "TX"],
-  ["Prabhakar Linwood", "Example Inc.", "Hartford", "CT"],
-  ["Kaui Ignace", "Example Inc.", "Yonkers", "NY"],
-  ["Esperanza Susanne", "Example Inc.", "Hartford", "CT"],
-  ["Christian Birgitte", "Example Inc.", "Tampa", "FL"],
-  ["Meral Elias", "Example Inc.", "Hartford", "CT"],
-  ["Deep Pau", "Example Inc.", "Yonkers", "NY"],
-  ["Sebastiana Hani", "Example Inc.", "Dallas", "TX"],
-  ["Marciano Oihana", "Example Inc.", "Yonkers", "NY"],
-  ["Brigid Ankur", "Example Inc.", "Dallas", "TX"],
-  ["Anna Siranush", "Example Inc.", "Yonkers", "NY"],
-  ["Avram Sylva", "Example Inc.", "Hartford", "CT"],
-  ["Serafima Babatunde", "Example Inc.", "Tampa", "FL"],
-  ["Gaston Festus", "Example Inc.", "Tampa", "FL"],
-];
-
 const useStyles = makeStyles(theme => ({
   tableOverflow: {
     overflow: 'auto'
   }
 }))
 
-export default function Tables() {
-  const classes = useStyles();
-  return (
-    <>
-      <PageTitle title="Rendez-vous" />
-      <Grid container spacing={4}>
-        <Grid item lg={12} md={12} sm={12} xs={12}>
-          <Widget
-            title="Importer un rendez-vous"
-            upperTitle
-            bodyClass={classes.fullHeightBody}
-            className={classes.card}
-          >
-            <div className={classes.visitsNumberContainer}>
-              <Grid container item alignItems={"center"}>
-                <Grid item xs={12}>
-                    <Dropzone
-                      getUploadParams={getUploadParams}
-                      onChangeStatus={handleChangeStatus}
-                      onSubmit={handleSubmit}
-                      inputContent="Glisser ou importer votre fichier"
-                      inputWithFilesContent="Ajouter un fichier"
-                      submitButtonContent="Valider"
-                      accept=".xlsx, .ods, .csv"
-                    />
-                </Grid>
-              </Grid>
-            </div>
-          </Widget>
+
+export default function Opinions() {
+
+  var classes = useStyles();
+  var [opinions, setOpinions] = useState("");
+  var [isLoading, setIsLoading] = useState(true);
+  var [opinionsArray, setOpinionsArray] = useState([]);
+
+  useEffect(() => {
+    axios.get(`http://194.183.220.233:9095/Mediconsent/rest/avis`)
+      .then(res => {
+        const opinions_data = res.data
+        setOpinions(opinions_data);
+        setIsLoading(false)
+        var array= [];
+        opinions_data.map((opinion) => {
+          array.push([opinion.id_avis,opinion.notes, opinion.commentaire])
+        })
+        setOpinionsArray(array);
+      })
+  }, []);
+
+  if (isLoading) {
+    return (<CircularProgress size={26} className={classes.loginLoader} />)
+  }
+  else {
+    return (
+      <>
+        <PageTitle title="Rendez-vous" />
+        <Grid container spacing={4}>
+          <Grid item xs={12}>
+            <MUIDataTable
+              title="Liste des avis"
+              data={opinionsArray}
+              columns={["#", "Notes", "Commentaire"]}
+              options={{
+                filterType: "checkbox",
+              }}
+            />
+          </Grid>
         </Grid>
-      </Grid>
-     
-      <Grid container spacing={4}>
-        <Grid item xs={12}>
-          <MUIDataTable
-            title="Employee List"
-            data={datatableData}
-            columns={["Name", "Company", "City", "State"]}
-            options={{
-              filterType: "checkbox",
-            }}
-          />
-        </Grid>
-      </Grid>
-    </>
-  );
+      </>
+    );
+  }
 }
