@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import axios from "axios";
 
 import {
   Grid,
   LinearProgress,
+  CircularProgress,
   Select,
   OutlinedInput,
   MenuItem,
@@ -28,35 +29,26 @@ import {
 import useStyles from "./styles";
 
 // components
-import mock from "./mock";
 import Widget from "../../components/Widget";
 import PageTitle from "../../components/PageTitle";
 import { Typography } from "../../components/Wrappers";
 import Dot from "../../components/Sidebar/components/Dot";
 import Table from "./components/Table/Table";
-import BigStat from "./components/BigStat/BigStat";
 import { useUserState } from "../../context/UserContext";
 
-const mainChartData = getMainChartData();
-const PieChartData = [
-  { name: "Group A", value: 400, color: "primary" },
-  { name: "Group B", value: 300, color: "secondary" },
-  { name: "Group C", value: 300, color: "warning" },
-  { name: "Group D", value: 200, color: "success" },
-];
 
 export default function Dashboard(props) {
 
   var classes = useStyles();
   var theme = useTheme();
   var UserState = useUserState();
-
   var [etablissement, setEtablissement] = useState("");
-  var [examens, setExamens] = useState("");
+  var [examens, setExamens] = useState("{}");
   var [nbExamens, setNbExamens] = useState("");
+  var [isLoading, setIsLoading] = useState(true);
   var [nbNotes, setNbNotes] = useState("");
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     axios.get(`http://194.183.220.233:9095/Mediconsent/rest/etablissement/utilisateur/${UserState.id_utilisateur}`)
       .then(res => {
         const etablissement_data = res.data
@@ -69,186 +61,190 @@ export default function Dashboard(props) {
             setNbExamens(examens_data.length)
 
             let total_notes = 0;
-            examens_data.map((examens) => {
-              total_notes ++;
+            examens_data.map((examens, index) => {
+              total_notes++;
             })
             setNbNotes(total_notes);
+          
+            setIsLoading(false);
+
           })
       })
   }, []);
 
+  if (isLoading) {
+    return (<CircularProgress size={26} className={classes.loginLoader} />)
+  }
+  else {
 
-  return (
-    <>
-      <PageTitle title="Dashboard" button={<Button
-        variant="contained"
-        size="medium"
-        color="secondary"
-      >
-
-      </Button>} />
-      <Grid container spacing={4}>
-        <Grid item lg={12} md={12} sm={12} xs={12}>
-          <Widget
-            title="Etablissement"
-            upperTitle
-            bodyClass={classes.fullHeightBody}
-            className={classes.card}
-          >
-            <div className={classes.visitsNumberContainer}>
-              <Grid container item alignItems={"center"}>
-                <Grid item xs={6}>
-                  <Typography size="xl" weight="medium" noWrap>
-                    {etablissement.nom_etablissement}
-                  </Typography>
+    return (
+      <>
+        <PageTitle title="Dashboard" />
+        <Grid container spacing={4}>
+          <Grid item lg={12} md={12} sm={12} xs={12}>
+            <Widget
+              title="Etablissement"
+              upperTitle
+              bodyClass={classes.fullHeightBody}
+              className={classes.card}
+            >
+              <div className={classes.visitsNumberContainer}>
+                <Grid container item alignItems={"center"}>
+                  <Grid item xs={6}>
+                    <Typography size="xl" weight="medium" noWrap>
+                      {etablissement.nom_etablissement}
+                    </Typography>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </div>
-          </Widget>
-        </Grid>
+              </div>
+            </Widget>
+          </Grid>
 
-        <Grid item lg={4} md={6} sm={8} xs={12}>
-          <Widget
-            title="Nombre d'examens"
-            upperTitle
-            bodyClass={classes.fullHeightBody}
-            className={classes.card}
-          >
-            <div className={classes.visitsNumberContainer}>
-              <Grid container item alignItems={"center"}>
-                <Grid item xs={6}>
-                  <Typography size="xl" weight="medium" noWrap>
-                    {nbExamens}
-                  </Typography>
+          <Grid item lg={4} md={6} sm={6} xs={12}>
+            <Widget
+              title="Nombre d'examens"
+              upperTitle
+              bodyClass={classes.fullHeightBody}
+              className={classes.card}
+            >
+              <div className={classes.visitsNumberContainer}>
+                <Grid container item alignItems={"center"}>
+                  <Grid item xs={6}>
+                    <Typography size="xl" weight="medium" noWrap>
+                      {nbExamens}
+                    </Typography>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </div>
-          </Widget>
-        </Grid>
+              </div>
+            </Widget>
+          </Grid>
 
-        <Grid item lg={4} md={6} sm={8} xs={12}>
-          <Widget
-            title="Nombre d'avis"
-            upperTitle
-            bodyClass={classes.fullHeightBody}
-            className={classes.card}
-          >
-            <div className={classes.visitsNumberContainer}>
-              <Grid container item alignItems={"center"}>
-                <Grid item xs={6}>
-                  <Typography size="xl" weight="medium" noWrap>
-                    {nbNotes}
-                  </Typography>
+          <Grid item lg={4} md={6} sm={6} xs={12}>
+            <Widget
+              title="Nombre d'avis"
+              upperTitle
+              bodyClass={classes.fullHeightBody}
+              className={classes.card}
+            >
+              <div className={classes.visitsNumberContainer}>
+                <Grid container item alignItems={"center"}>
+                  <Grid item xs={6}>
+                    <Typography size="xl" weight="medium" noWrap>
+                      {nbNotes}
+                    </Typography>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </div>
-          </Widget>
-        </Grid>
+              </div>
+            </Widget>
+          </Grid>
 
-        <Grid item xs={12}>
-          <Widget
-            bodyClass={classes.mainChartBody}
-            header={
-              <div className={classes.mainChartHeader}>
-                <Typography
-                  variant="h5"
-                  color="text"
-                  colorBrightness="secondary"
-                >
-                  Daily Line Chart
+          <Grid item lg={4} md={12} sm={12} xs={12}>
+            <Widget
+              title="Téléphone de l'établissement"
+              upperTitle
+              bodyClass={classes.fullHeightBody}
+              className={classes.card}
+            >
+              <div className={classes.visitsNumberContainer}>
+                <Grid container item alignItems={"center"}>
+                  <Grid item xs={6}>
+                    <Typography size="xl" weight="medium" noWrap>
+                      {etablissement.telephone_etablissement}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </div>
+            </Widget>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Widget
+              bodyClass={classes.mainChartBody}
+              header={
+                <div className={classes.mainChartHeader}>
+                  <Typography
+                    variant="h5"
+                    color="text"
+                    colorBrightness="secondary"
+                  >
+                    Résumé des avis
                 </Typography>
-                <div className={classes.mainChartHeaderLabels}>
-                  <div className={classes.mainChartHeaderLabel}>
-                    <Dot color="warning" />
-                    <Typography className={classes.mainChartLegentElement}>
-                      Tablet
+                  <div className={classes.mainChartHeaderLabels}>
+                    <div className={classes.mainChartHeaderLabel}>
+                      <Dot color="warning" />
+                      <Typography className={classes.mainChartLegentElement}>
+                        Avis
                     </Typography>
-                  </div>
-                  <div className={classes.mainChartHeaderLabel}>
-                    <Dot color="primary" />
-                    <Typography className={classes.mainChartLegentElement}>
-                      Mobile
-                    </Typography>
-                  </div>
-                  <div className={classes.mainChartHeaderLabel}>
-                    <Dot color="secondary" />
-                    <Typography className={classes.mainChartLegentElement}>
-                      Desktop
-                    </Typography>
+                    </div>
                   </div>
                 </div>
-              </div>
-            }
-          >
-            <ResponsiveContainer width="100%" minWidth={500} height={350}>
-              <ComposedChart
-                margin={{ top: 0, right: -15, left: -15, bottom: 0 }}
-                data={mainChartData}
-              >
-                <YAxis
-                  ticks={[0, 2500, 5000, 7500]}
-                  tick={{ fill: theme.palette.text.hint + "80", fontSize: 14 }}
-                  stroke={theme.palette.text.hint + "80"}
-                  tickLine={false}
-                />
-                <XAxis
-                  tickFormatter={i => i + 1}
-                  tick={{ fill: theme.palette.text.hint + "80", fontSize: 14 }}
-                  stroke={theme.palette.text.hint + "80"}
-                  tickLine={false}
-                />
-                <Area
-                  type="natural"
-                  dataKey="desktop"
-                  fill={theme.palette.background.light}
-                  strokeWidth={0}
-                  activeDot={false}
-                />
-                <Line
-                  type="natural"
-                  dataKey="mobile"
-                  stroke={theme.palette.primary.main}
-                  strokeWidth={2}
-                  dot={false}
-                  activeDot={false}
-                />
-                <Line
-                  type="linear"
-                  dataKey="tablet"
-                  stroke={theme.palette.warning.main}
-                  strokeWidth={2}
-                  dot={{
-                    stroke: theme.palette.warning.dark,
-                    strokeWidth: 2,
-                    fill: theme.palette.warning.main,
-                  }}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </Widget>
-        </Grid>
-        {mock.bigStat.map(stat => (
-          <Grid item md={4} sm={6} xs={12} key={stat.product}>
-            <BigStat {...stat} />
+              }
+            >
+              <ResponsiveContainer width="100%" minWidth={500} height={350}>
+                <ComposedChart
+                  margin={{ top: 0, right: -15, left: -15, bottom: 0 }}
+                  data={getMainChartData(examens)}
+                >
+                  <YAxis
+                    ticks={[0, 1, 2, 3, 4, 5]}
+                    tick={{ fill: theme.palette.text.hint + "80", fontSize: 14 }}
+                    stroke={theme.palette.text.hint + "80"}
+                    tickLine={false}
+                  />
+                  <XAxis
+                    tickFormatter={i => i + 1}
+                    tick={{ fill: theme.palette.text.hint + "80", fontSize: 14 }}
+                    stroke={theme.palette.text.hint + "80"}
+                    tickLine={false}
+                  />
+                  <Area
+                    type="natural"
+                    dataKey="desktop"
+                    fill={theme.palette.background.light}
+                    strokeWidth={0}
+                    activeDot={false}
+                  />
+                  <Line
+                    type="natural"
+                    dataKey="mobile"
+                    stroke={theme.palette.primary.main}
+                    strokeWidth={2}
+                    dot={false}
+                    activeDot={false}
+                  />
+                  <Line
+                    type="linear"
+                    dataKey="tablet"
+                    stroke={theme.palette.warning.main}
+                    strokeWidth={2}
+                    dot={{
+                      stroke: theme.palette.warning.dark,
+                      strokeWidth: 2,
+                      fill: theme.palette.warning.main,
+                    }}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </Widget>
           </Grid>
-        ))}
-        <Grid item xs={12}>
-          <Widget
-            title="Support Requests"
-            upperTitle
-            noBodyPadding
-            bodyClass={classes.tableWidget}
-          >
-            <Table data={mock.table} />
-          </Widget>
-        </Grid>
-      </Grid>
-    </>
-  );
-}
 
+          <Grid item xs={12}>
+            <Widget
+              title="Examens"
+              upperTitle
+              noBodyPadding
+              bodyClass={classes.tableWidget}
+            >
+              <Table data={examens} />
+            </Widget>
+          </Grid>
+        </Grid>
+      </>
+    );
+  }
+}
 // #######################################################################
-function getRandomData(length, min, max, multiplier = 10, maxDiff = 10) {
+function getRandomData(length, min, max, multiplier = 1, maxDiff = 0) {
   var array = new Array(length).fill();
   let lastValue;
 
@@ -269,19 +265,15 @@ function getRandomData(length, min, max, multiplier = 10, maxDiff = 10) {
   });
 }
 
-function getMainChartData() {
-  var resultArray = [];
-  var tablet = getRandomData(31, 3500, 6500, 7500, 1000);
-  var desktop = getRandomData(31, 1500, 7500, 7500, 1500);
-  var mobile = getRandomData(31, 1500, 7500, 7500, 1500);
+function getMainChartData(examens) {
 
-  for (let i = 0; i < tablet.length; i++) {
-    resultArray.push({
-      tablet: tablet[i].value,
-      desktop: desktop[i].value,
-      mobile: mobile[i].value,
-    });
-  }
+var resultArray = [];
+
+examens.map((examen, index) => {
+  resultArray.push({
+    tablet: examen.avis.notes,
+  });
+})
 
   return resultArray;
 }

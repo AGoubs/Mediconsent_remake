@@ -17,30 +17,24 @@ const states = {
 
 export default function TableComponent({ data }) {
   const classes = useStyles();
-  var keys = Object.keys(data[0]).map(i => i.toUpperCase());
-  keys.shift(); // delete "id" key
 
   return (
     <Table className="mb-0">
       <TableHead>
         <TableRow>
-          {keys.map(key => (
-            <TableCell key={key}>{key}</TableCell>
-          ))}
+            <TableCell key="typeExamens">TYPE D'EXAMENS</TableCell>
+            <TableCell key="patientExamens">PATIENT</TableCell>
+            <TableCell key="dateExamens">DATE</TableCell>
+            <TableCell key="avisExamens">AVIS</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {data.map(({ id, name, email, product, price, date, city, status }) => (
-          <TableRow key={id}>
-            <TableCell className="pl-3 fw-normal">{name}</TableCell>
-            <TableCell>{email}</TableCell>
-            <TableCell>{product}</TableCell>
-            <TableCell>{price}</TableCell>
-            <TableCell>{date}</TableCell>
-            <TableCell>{city}</TableCell>
-            <TableCell>
-              <Chip label={status} classes={{root: classes[states[status.toLowerCase()]]}}/>
-            </TableCell>
+        {data.map((examens, index) => (
+          <TableRow key={examens.id_examen}>
+            <TableCell className="pl-3 fw-normal">{examens.type_examen.formulaire.libelle_formulaire}</TableCell>
+            <TableCell>Patient</TableCell>
+            <TableCell>{new Date(examens.date_examen).getDate()}/{new Date(examens.date_examen).getMonth()}/{new Date(examens.date_examen).getFullYear()}</TableCell>
+            <TableCell>{examens.avis.notes} / 5</TableCell>
           </TableRow>
         ))}
       </TableBody>
