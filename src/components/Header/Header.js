@@ -121,14 +121,6 @@ export default function Header(props) {
               {UserState.prenom_utilisateur + ' ' + UserState.nom_utilisateur}
             </Typography>
           </div>
-          <MenuItem
-            className={classNames(
-              classes.profileMenuItem,
-              classes.headerMenuItem,
-            )}
-          >
-            <AccountIcon className={classes.profileMenuIcon} /> Profile
-          </MenuItem>
 
           <div className={classes.profileMenuUser}>
             <Typography
