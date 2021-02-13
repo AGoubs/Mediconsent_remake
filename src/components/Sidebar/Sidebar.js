@@ -34,7 +34,9 @@ import {
 } from "../../context/LayoutContext";
 
 const structure = [
-  { id: 0, label: "Dashboard", link: "/app/dashboard", icon: <HomeIcon /> },
+  { id: 9, type: "title", label: "ACCUEIL" },
+
+  { id: 0, label: "Tableau de bord", link: "/app/dashboard", icon: <HomeIcon /> },
   { id: 1, type: "divider" },
   { id: 2, type: "title", label: "GESTION" },
   {

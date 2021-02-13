@@ -79,7 +79,7 @@ export default function Dashboard(props) {
 
     return (
       <>
-        <PageTitle title="Dashboard" />
+        <PageTitle title="Tableau de bord" />
         <Grid container spacing={4}>
           <Grid item lg={12} md={12} sm={12} xs={12}>
             <Widget

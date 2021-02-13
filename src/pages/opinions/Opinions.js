@@ -54,9 +54,6 @@ export default function Opinions() {
               title="Liste des avis"
               data={opinionsArray}
               columns={["#", "Notes", "Commentaire"]}
-              options={{
-                filterType: "checkbox",
-              }}
             />
           </Grid>
         </Grid>
