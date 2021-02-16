@@ -22,7 +22,7 @@ export default makeStyles(theme => ({
     },
   },
   logotypeText: {
-    fontWeight: 500,
+    fontWeight: 200,
     color: "white",
     marginLeft: theme.spacing(2),
   },
