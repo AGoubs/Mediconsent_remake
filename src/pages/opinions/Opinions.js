@@ -28,7 +28,7 @@ export default function Opinions() {
   var [opinionsArray, setOpinionsArray] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://194.183.220.233:9095/Mediconsent/rest/avis`)
+    axios.get(process.env.REACT_APP_API_AVIS)
       .then(res => {
         const opinions_data = res.data
         setOpinions(opinions_data);

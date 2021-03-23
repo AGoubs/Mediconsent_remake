@@ -48,13 +48,13 @@ export default function Dashboard(props) {
   var [isLoading, setIsLoading] = useState(true);
   var [nbNotes, setNbNotes] = useState("");
 
-  useEffect(()  => {
-    axios.get(`http://194.183.220.233:9095/Mediconsent/rest/etablissement/utilisateur/${UserState.id_utilisateur}`)
+  useEffect(() => {
+    axios.get(process.env.REACT_APP_API_ETABLISSEMENT_UTILISATEUR + UserState.id_utilisateur)
       .then(res => {
         const etablissement_data = res.data
         setEtablissement(etablissement_data);
 
-        axios.get(`http://194.183.220.233:9095/Mediconsent/rest/examens/etablissement/${etablissement_data.id_etablissement}`)
+        axios.get(process.env.REACT_APP_API_EXAMEN_ETABLISSEMENT + etablissement_data.id_etablissement)
           .then(res => {
             const examens_data = res.data
             setExamens(examens_data);
@@ -65,7 +65,7 @@ export default function Dashboard(props) {
               total_notes++;
             })
             setNbNotes(total_notes);
-          
+
             setIsLoading(false);
 
           })
@@ -267,13 +267,13 @@ function getRandomData(length, min, max, multiplier = 1, maxDiff = 0) {
 
 function getMainChartData(examens) {
 
-var resultArray = [];
+  var resultArray = [];
 
-examens.map((examen, index) => {
-  resultArray.push({
-    tablet: examen.avis.notes,
-  });
-})
+  examens.map((examen, index) => {
+    resultArray.push({
+      tablet: examen.avis.notes,
+    });
+  })
 
   return resultArray;
 }

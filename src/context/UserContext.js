@@ -6,7 +6,7 @@ var UserDispatchContext = React.createContext();
 function userReducer(state, action) {
   switch (action.type) {
     case "LOGIN_SUCCESS":
-      return { ...state, isAuthenticated: true, nom_utilisateur: action.nom_utilisateur, prenom_utilisateur: action.prenom_utilisateur, id_utilisateur: action.id_utilisateur};
+      return { ...state, isAuthenticated: true, nom_utilisateur: action.nom_utilisateur, prenom_utilisateur: action.prenom_utilisateur, id_utilisateur: action.id_utilisateur };
     case "SIGN_OUT_SUCCESS":
       return { ...state, isAuthenticated: false };
     case "LOGIN_FAILURE":
@@ -60,7 +60,7 @@ function loginUser(dispatch, login, password, history, setIsLoading, setError) {
 
   axios
     .get(
-      `http://194.183.220.233:9095/Mediconsent/rest/checkLogin/${login}/${password}`,
+      process.env.REACT_APP_API_CHECKLOGIN + login + '/' + password,
       {
         headers: {
           "Access-Control-Allow-Origin": "*"
@@ -76,12 +76,12 @@ function loginUser(dispatch, login, password, history, setIsLoading, setError) {
           localStorage.setItem('id_utilisateur', response.data.id_utilisateur)
           setError(null)
           setIsLoading(false)
-          dispatch({ type: 'LOGIN_SUCCESS', nom_utilisateur: response.data.nom_utilisateur, prenom_utilisateur: response.data.prenom_utilisateur, id_utilisateur: response.data.id_utilisateur})
+          dispatch({ type: 'LOGIN_SUCCESS', nom_utilisateur: response.data.nom_utilisateur, prenom_utilisateur: response.data.prenom_utilisateur, id_utilisateur: response.data.id_utilisateur })
 
           history.push('/app/dashboard')
         }, 2000);
       } else {
-        dispatch({ type: "LOGIN_FAILURE", nom_utilisateur:"" });
+        dispatch({ type: "LOGIN_FAILURE", nom_utilisateur: "" });
         setError(true);
         setIsLoading(false);
       }

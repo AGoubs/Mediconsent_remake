@@ -23,7 +23,7 @@ class Question extends React.Component {
     handleSubmit = event => {
         event.preventDefault();
 
-        axios.put(`http://194.183.220.233:9095/Mediconsent/rest/question/save`,
+        axios.put(process.env.REACT_APP_API_QESTION_SAVE,
             {
                 id_question: this.props.id,
                 libelle_question: this.state.libelle_question

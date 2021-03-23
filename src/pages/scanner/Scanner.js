@@ -24,7 +24,7 @@ export default function Scanner() {
     var [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`http://194.183.220.233:9095/Mediconsent/rest/questions/formulaire/1`)
+        axios.get(process.env.REACT_APP_API_QUESTION_SCANNER)
             .then(res => {
                 const scanner_data = res.data;
                 setScanner(scanner_data);
